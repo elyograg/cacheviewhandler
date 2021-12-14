@@ -2,6 +2,8 @@
 
 As of mid-December 2021, this handler requires changes to Solr source code in order to function.
 
+If you want to edit this code, it imports into eclipse without trouble.  It will probably also import into IntelliJ idea and other IDEs that can handle Java gradle projects.
+
 ## Tools needed to build customized Solr:
 
 * A POSIX operating system.  Linux is known to work.
