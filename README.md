@@ -4,6 +4,10 @@ As of mid-December 2021, this handler requires changes to Solr source code in or
 
 If you want to edit this code, it imports into eclipse without trouble.  It will probably also import into IntelliJ idea and other IDEs that can handle Java gradle projects.
 
+If using eclipse, before importing the project, go to the eclipse marketplace and install Spring Tools 4 and Spring Tools 3 Add-On for Spring Tools 4.  You will also need Buildship, for Gradle integration, but this should be installed by default in recent eclipse versions.
+
+There is probably some kind of Spring addon for Intellij as well that should be installed before importing this project.
+
 ## Tools needed to build customized Solr:
 
 * A POSIX operating system.  Linux is known to work.
