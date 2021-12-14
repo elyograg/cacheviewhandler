@@ -1,0 +1,122 @@
+diff --git a/solr/core/src/java/org/apache/solr/search/CaffeineCache.java b/solr/core/src/java/org/apache/solr/search/CaffeineCache.java
+index f18248669ba..b608a00c12d 100644
+--- a/solr/core/src/java/org/apache/solr/search/CaffeineCache.java
++++ b/solr/core/src/java/org/apache/solr/search/CaffeineCache.java
+@@ -35,9 +35,6 @@ import java.util.concurrent.ForkJoinPool;
+ import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.atomic.LongAdder;
+ 
+-import com.github.benmanes.caffeine.cache.AsyncCache;
+-import com.github.benmanes.caffeine.cache.RemovalCause;
+-import com.github.benmanes.caffeine.cache.RemovalListener;
+ import org.apache.lucene.util.Accountable;
+ import org.apache.lucene.util.RamUsageEstimator;
+ import org.apache.solr.common.SolrException;
+@@ -47,9 +44,12 @@ import org.apache.solr.util.IOFunction;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ 
++import com.github.benmanes.caffeine.cache.AsyncCache;
+ import com.github.benmanes.caffeine.cache.Cache;
+ import com.github.benmanes.caffeine.cache.Caffeine;
+ import com.github.benmanes.caffeine.cache.Policy.Eviction;
++import com.github.benmanes.caffeine.cache.RemovalCause;
++import com.github.benmanes.caffeine.cache.RemovalListener;
+ import com.github.benmanes.caffeine.cache.stats.CacheStats;
+ import com.google.common.annotations.VisibleForTesting;
+ 
+@@ -291,6 +291,11 @@ public class CaffeineCache<K, V> extends SolrCacheBase implements SolrCache<K, V
+     return existing;
+   }
+ 
++  @Override
++  public Set<K> keySet() {
++    return cache.asMap().keySet();
++  }
++
+   @Override
+   public void clear() {
+     cache.invalidateAll();
+diff --git a/solr/core/src/java/org/apache/solr/search/FastLRUCache.java b/solr/core/src/java/org/apache/solr/search/FastLRUCache.java
+index bf3b01049e0..c891932d1cd 100644
+--- a/solr/core/src/java/org/apache/solr/search/FastLRUCache.java
++++ b/solr/core/src/java/org/apache/solr/search/FastLRUCache.java
+@@ -249,6 +249,12 @@ public class FastLRUCache<K, V> extends SolrCacheBase implements SolrCache<K, V>
+     return cache.remove(key);
+   }
+ 
++  @SuppressWarnings("unchecked")
++  @Override
++  public Set<K> keySet() {
++    return (Set<K>) cache.getMap().keySet();
++  }
++
+   @Override
+   public V get(K key) {
+     return cache.get(key);
+diff --git a/solr/core/src/java/org/apache/solr/search/LFUCache.java b/solr/core/src/java/org/apache/solr/search/LFUCache.java
+index fa5be4360f4..242ea454538 100644
+--- a/solr/core/src/java/org/apache/solr/search/LFUCache.java
++++ b/solr/core/src/java/org/apache/solr/search/LFUCache.java
+@@ -189,6 +189,12 @@ public class LFUCache<K, V> implements SolrCache<K, V>, Accountable {
+     return cache.remove(key);
+   }
+ 
++  @SuppressWarnings("unchecked")
++  @Override
++  public Set<K> keySet() {
++    return (Set<K>) cache.getMap().keySet();
++  }
++
+   @Override
+   public V computeIfAbsent(K key, IOFunction<? super K, ? extends V> mappingFunction) {
+     return cache.computeIfAbsent(key, k -> {
+diff --git a/solr/core/src/java/org/apache/solr/search/LRUCache.java b/solr/core/src/java/org/apache/solr/search/LRUCache.java
+index cb2de0d6e9d..cf3ba08ff1d 100644
+--- a/solr/core/src/java/org/apache/solr/search/LRUCache.java
++++ b/solr/core/src/java/org/apache/solr/search/LRUCache.java
+@@ -329,6 +329,11 @@ public class LRUCache<K,V> extends SolrCacheBase implements SolrCache<K,V>, Acco
+     }
+   }
+ 
++  @Override
++  public Set<K> keySet() {
++    return map.keySet();
++  }
++
+   @Override
+   public V put(K key, V value) {
+     if (maxSize == Integer.MAX_VALUE && maxRamBytes == Long.MAX_VALUE) {
+diff --git a/solr/core/src/java/org/apache/solr/search/SolrCache.java b/solr/core/src/java/org/apache/solr/search/SolrCache.java
+index 012c6a09b48..5b02e4f09fa 100644
+--- a/solr/core/src/java/org/apache/solr/search/SolrCache.java
++++ b/solr/core/src/java/org/apache/solr/search/SolrCache.java
+@@ -16,14 +16,15 @@
+  */
+ package org.apache.solr.search;
+ 
+-import org.apache.solr.core.SolrInfoBean;
+-import org.apache.solr.metrics.SolrMetricProducer;
+-import org.apache.solr.util.IOFunction;
+-
+ import java.io.IOException;
+ import java.util.Map;
++import java.util.Set;
+ import java.util.function.Function;
+ 
++import org.apache.solr.core.SolrInfoBean;
++import org.apache.solr.metrics.SolrMetricProducer;
++import org.apache.solr.util.IOFunction;
++
+ 
+ /**
+  * Primary API for dealing with Solr's internal caches.
+@@ -100,6 +101,8 @@ public interface SolrCache<K,V> extends SolrInfoBean, SolrMetricProducer {
+ 
+   public V remove(K key);
+ 
++  public Set<K> keySet();
++
+   /**
+    * Get an existing element or atomically compute it if missing.
+    * @param key key
