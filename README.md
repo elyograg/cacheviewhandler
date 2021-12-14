@@ -1,6 +1,6 @@
 # cacheviewhandler
 
-### As of mid-December 2021, this handler requires changes to Solr source code in order to function.
+As of mid-December 2021, this handler requires changes to Solr source code in order to function.
 
 ## Tools needed to build customized Solr:
 
