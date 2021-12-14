@@ -23,6 +23,7 @@ There is probably some kind of Spring addon for Intellij as well that should be 
     * Delete the included solr-core jar from the lib directory.
     * Build custom Solr as outlined below.
     * Copy custom solr-core jar from the freshly built dist directory to this tree's lib directory.
+    * Update the lucene-core dependency in the build.gradle file to match your Solr version.
 * Use "./gradlew clean assemble" to build.
 
 ## Installing this package:
