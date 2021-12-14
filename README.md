@@ -23,6 +23,11 @@ As of mid-December 2021, this handler requires changes to Solr source code in or
 
 * Build the package as outlined above.
 * Create a directory called lib in the Solr Home.  This is typically where solr.xml and core directories live.  Copy the jar ending in -plain from the build/libs directory to that new lib directory.
+* In a core's solrconfig.xml, add this line next to other requestHandler definitions:
+    * <requestHandler name="/admin/info/cache" class="org.elyograg.solr.handler.CacheViewHandler" />
+* To use, load the following URL, substiting correct values for the all-uppercase parts:
+    * http://SERVER:PORT/sorl/CORE/admin/info/cache?cache=filter
+    * So far, the only cache that is available is filter.
 
 ## Building a custom Solr:
 
