@@ -1,5 +1,7 @@
 # cacheviewhandler
 
+### As of mid-December 2021, this handler requires changes to Solr source code in order to function.
+
 ## Tools needed to build customized Solr:
 
 * A POSIX operating system.  Linux is known to work.
@@ -10,7 +12,7 @@
 
 ## Building this package:
 
-* If you're using Solr 8.11.x, you can probably skip the next step:
+* If you're using Solr 8.11.x, you can probably skip the next step and its sub-steps:
 * Obtain correct solr-core jar:
     * Delete the included solr-core jar from the lib directory.
     * Build custom Solr as outlined below.
@@ -33,4 +35,4 @@
 * Change into the solr directory with "cd solr".
 * Build the package.  If you're not building 8.11.1, substitute the correct version.  If the version is omitted, the files will all have "-SNAPSHOT" appended to the version number.  That may be perfectly fine for your setup, and if it is, you can omit the -Dversion parameter entirely:
     * ant -Dversion=8.11.1 clean package
-* If the build succeeds, you will find packages in the "package" directory that can be used just like an official Solr download.
+* If the build succeeds, you will find packages in the "package" directory that can be used and installed just like an official Solr download.
