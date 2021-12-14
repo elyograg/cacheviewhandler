@@ -17,7 +17,12 @@ As of mid-December 2021, this handler requires changes to Solr source code in or
     * Delete the included solr-core jar from the lib directory.
     * Build custom Solr as outlined below.
     * Copy custom solr-core jar from the freshly built dist directory to this tree's lib directory.
-* Use "./gradlew clean assemble" to create jars in build/libs ... the "-plain" jar will be the one you need.
+* Use "./gradlew clean assemble" to build.
+
+## Installing this package:
+
+* Build the package as outlined above.
+* Create a directory called lib in the Solr Home.  This is typically where solr.xml and core directories live.  Copy the jar ending in -plain from the build/libs directory to that new lib directory.
 
 ## Building a custom Solr:
 
@@ -36,3 +41,4 @@ As of mid-December 2021, this handler requires changes to Solr source code in or
 * Build the package.  If you're not building 8.11.1, substitute the correct version.  If the version is omitted, the files will all have "-SNAPSHOT" appended to the version number.  That may be perfectly fine for your setup, and if it is, you can omit the -Dversion parameter entirely:
     * ant -Dversion=8.11.1 clean package
 * If the build succeeds, you will find packages in the "package" directory that can be used and installed just like an official Solr download.
+* <mark>The only part of a Solr install that is changed from stock with this patch is the solr-core jar.  If you need to update an existing install (particularly a docker setup) without completely reinstalling, you can take the new solr-core jar from dist and replace the one in server/solr-webapp/webapp/WEB-INF/lib</mark>
