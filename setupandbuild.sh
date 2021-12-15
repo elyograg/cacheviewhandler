@@ -1,5 +1,5 @@
 #!/bin/bash
-WORK_LOCATION=/opt/foo
+WORK_LOCATION=/opt
 ANT_VERSION=1.10.12
 SOLR_VERSION=8.11.0
 #-- If multiple JDKs are installed, uncomment the following
@@ -11,7 +11,7 @@ mkdir -p ${WORK_LOCATION}
 cd ${WORK_LOCATION}
 git clone https://github.com/elyograg/cacheviewhandler.git
 git clone https://github.com/apache/lucene-solr.git
-wget https://dlcdn.apache.org//ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz
+wget https://archive.apache.org/dist/ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz
 tar zxf apache-ant-${ANT_VERSION}-bin.tar.gz
 export ANT_HOME=${WORK_LOCATION}/apache-ant-${ANT_VERSION}
 cd lucene-solr
