@@ -14,7 +14,7 @@ There is probably some kind of Spring Tools package for IntelliJ as well that sh
 * perl 5.x
 * wget
 * git, a recent version is strongly recommended.
-* A JDK, version 8, preferably the latest 8.x version you can get.
+* A JDK, version 8, preferably the latest 8.x version you can get.  You'll need to be sure that the JDK part (Java Delopment Kit) is installed, not just a JRE.
 
 ## Building:
 
@@ -30,11 +30,10 @@ There is probably some kind of Spring Tools package for IntelliJ as well that sh
 
 * Build the package as outlined above.
 * Create a directory called lib in the Solr Home.  This is typically where solr.xml and core directories live.  Copy the jar with "-plain" in the filename from the build/libs directory to that new lib directory.
-* Replace the solr-core jar in your Solr webapp with a custom one.
-    * If you skipped most of the build instructions because you're running the same Solr version that the build script mentions, then the source for the solr-core jar will be the "lib" directory in this repo.  If you did the full build, the proper solr-core jar will be in ${WORK_LOCATION}/lucene-solr/solr/dist instead.
-    * Copy the solr-core jar to your Solr install directory, in the server/solr-webapp/webapp/WEB-INF/lib directory.  If you did things right, the new jar will have the same name as the old one and will overwrite it.  If you find that you have two versions of the solr-core jar, delete the one that you just copied, and try the build again, reading the instructions more carefully.
+* Replace the solr-core jar in your Solr webapp with the one in the lib directory.
+    * The destination location for the jar is server/solr-webapp/webapp/WEB-INF/lib in the Solr installation directory.
 * In a core's solrconfig.xml, add this line next to other requestHandler definitions:
-    * <requestHandler name="/admin/info/cache" class="org.elyograg.solr.handler.CacheViewHandler" />
+    * ``<requestHandler name="/admin/info/cache" class="org.elyograg.solr.handler.CacheViewHandler" />``
 * To use, access the following URL, substituting correct values for the all-uppercase parts:
     * http://SERVER:PORT/solr/CORE/admin/info/cache?cache=filter
     * So far, the only cache that is available is filter.
