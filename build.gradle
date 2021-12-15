@@ -16,6 +16,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation group: 'org.apache.solr', name: 'solr-solrj', version: '8+'
 	implementation group: 'org.apache.lucene', name: 'lucene-core', version: '8+'
+	implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '2+'
+	implementation group: 'io.dropwizard.metrics', name: 'metrics-core', version: '4+'
 	implementation fileTree(dir: 'lib', include: '*.jar')
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

@@ -4,6 +4,7 @@ import static org.apache.solr.common.params.CommonParams.FAILURE;
 import static org.apache.solr.common.params.CommonParams.STATUS;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.lucene.search.Query;
@@ -13,6 +14,7 @@ import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.RequestHandlerBase;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.response.SolrQueryResponse;
+import org.apache.solr.search.CaffeineCache;
 import org.apache.solr.search.DocSet;
 import org.apache.solr.search.SolrCache;
 import org.apache.solr.search.SolrIndexSearcher;
@@ -41,22 +43,18 @@ public class CacheViewHandler extends RequestHandlerBase implements SolrCoreAwar
 		RefCounted<SolrIndexSearcher> ref = myCore.getSearcher();
 		ref.incref();
 		SolrIndexSearcher searcher = ref.get();
-		if (requestedCache == null) {
-			rsp.add("error", "No cache requested, try cache=filter as a URL parameter.");
+		switch (requestedCache) {
+		case "filter":
+			populateWithFilterCacheInfo(rsp, searcher);
+			break;
+		case "test":
+			populateTest(rsp, searcher);
+			break;
+		default:
+			rsp.add("error", "Unknown Cache requested");
 			rsp.add(STATUS, FAILURE);
-			rsp.setException(new SolrException(SolrException.ErrorCode.BAD_REQUEST, "No cache requested"));
-		} else {
-			switch (requestedCache) {
-			case "filter":
-				populateWithFilterCacheInfo(rsp, searcher);
-				break;
-
-			default:
-				rsp.add("error", "Unknown Cache requested");
-				rsp.add(STATUS, FAILURE);
-				rsp.setException(new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Unknown Cache requested"));
-				break;
-			}
+			rsp.setException(new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Unknown Cache requested"));
+			break;
 		}
 		ref.decref();
 	}
@@ -68,6 +66,15 @@ public class CacheViewHandler extends RequestHandlerBase implements SolrCoreAwar
 			map.put(q.toString(), cache.get(q).size());
 		}
 		rsp.add("filterCacheEntries", map);
+	}
+	
+	private final void populateTest(SolrQueryResponse rsp, SolrIndexSearcher searcher) {
+		SolrCache<Query, DocSet> cache = searcher.getFilterCache();
+		CaffeineCache<Query, DocSet> cc = (CaffeineCache<Query, DocSet>) cache;
+		Set<String> metricNames = cc.getMetricNames();
+		for (String n : metricNames) {
+			rsp.add(n, 0);
+		}
 	}
 
 	@Override
