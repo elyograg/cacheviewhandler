@@ -41,16 +41,20 @@ public class CacheViewHandler extends RequestHandlerBase implements SolrCoreAwar
 		RefCounted<SolrIndexSearcher> ref = myCore.getSearcher();
 		ref.incref();
 		SolrIndexSearcher searcher = ref.get();
-		switch (requestedCache) {
-		case "filter":
-			populateWithFilterCacheInfo(rsp, searcher);
-			break;
+		if (requestedCache == null) {
+			rsp.add("error", "No cache requested, try cache=filter as a URL parameter.");
+		} else {
+			switch (requestedCache) {
+			case "filter":
+				populateWithFilterCacheInfo(rsp, searcher);
+				break;
 
-		default:
-			rsp.add("error", "Unknown Cache requested");
-			rsp.add(STATUS, FAILURE);
-			rsp.setException(new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Unknown Cache requested"));
-			break;
+			default:
+				rsp.add("error", "Unknown Cache requested");
+				rsp.add(STATUS, FAILURE);
+				rsp.setException(new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Unknown Cache requested"));
+				break;
+			}
 		}
 		ref.decref();
 	}
