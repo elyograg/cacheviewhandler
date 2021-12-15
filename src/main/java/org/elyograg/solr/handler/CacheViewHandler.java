@@ -43,6 +43,8 @@ public class CacheViewHandler extends RequestHandlerBase implements SolrCoreAwar
 		SolrIndexSearcher searcher = ref.get();
 		if (requestedCache == null) {
 			rsp.add("error", "No cache requested, try cache=filter as a URL parameter.");
+			rsp.add(STATUS, FAILURE);
+			rsp.setException(new SolrException(SolrException.ErrorCode.BAD_REQUEST, "No cache requested"));
 		} else {
 			switch (requestedCache) {
 			case "filter":
