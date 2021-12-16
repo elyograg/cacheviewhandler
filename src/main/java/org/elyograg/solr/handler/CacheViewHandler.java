@@ -50,7 +50,7 @@ public class CacheViewHandler extends RequestHandlerBase implements SolrCoreAwar
 			populateWithFilterCacheInfo(rsp, searcher);
 			break;
 		case "test":
-			populateTest(rsp, searcher);
+			populateFilterTest(rsp, searcher);
 			break;
 		default:
 			rsp.add("error", "Unknown Cache requested");
@@ -70,8 +70,14 @@ public class CacheViewHandler extends RequestHandlerBase implements SolrCoreAwar
 		rsp.add("filterCacheEntries", map);
 	}
 
-	private final void populateTest(SolrQueryResponse rsp, SolrIndexSearcher searcher) {
+	private final void populateFilterTest(SolrQueryResponse rsp, SolrIndexSearcher searcher) {
 		SolrCache<Query, DocSet> cache = searcher.getFilterCache();
+		if (!(cache instanceof CaffeineCache)) {
+			rsp.add("error", "Only caches using CaffeineCache will work with this handler.");
+			rsp.add(STATUS, FAILURE);
+			rsp.setException(new SolrException(SolrException.ErrorCode.BAD_REQUEST, "Cache not using CaffeineCache"));
+			return;
+		}
 		CaffeineCache<Query, DocSet> cc = (CaffeineCache<Query, DocSet>) cache;
 		MetricRegistry reg = cc.getMetricRegistry();
 		Set<String> metricNames = cc.getMetricNames();
