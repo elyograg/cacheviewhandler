@@ -22,6 +22,8 @@ import org.apache.solr.util.RefCounted;
 import org.apache.solr.util.plugin.PluginInfoInitialized;
 import org.apache.solr.util.plugin.SolrCoreAware;
 
+import com.codahale.metrics.MetricRegistry;
+
 /**
  * Handler that will export keys for available built-in Solr caches and show
  * some minimally useful info about the contents of those keys, without actually
@@ -67,14 +69,16 @@ public class CacheViewHandler extends RequestHandlerBase implements SolrCoreAwar
 		}
 		rsp.add("filterCacheEntries", map);
 	}
-	
+
 	private final void populateTest(SolrQueryResponse rsp, SolrIndexSearcher searcher) {
 		SolrCache<Query, DocSet> cache = searcher.getFilterCache();
 		CaffeineCache<Query, DocSet> cc = (CaffeineCache<Query, DocSet>) cache;
+		MetricRegistry reg = cc.getMetricRegistry();
 		Set<String> metricNames = cc.getMetricNames();
 		for (String n : metricNames) {
 			rsp.add(n, 0);
 		}
+		rsp.add("mn", reg);
 	}
 
 	@Override
