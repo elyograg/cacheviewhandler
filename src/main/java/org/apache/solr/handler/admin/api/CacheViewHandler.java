@@ -1,4 +1,4 @@
-package org.elyograg.solr.handler;
+package org.apache.solr.handler.admin.api;
 
 import static org.apache.solr.common.params.CommonParams.FAILURE;
 import static org.apache.solr.common.params.CommonParams.STATUS;
